@@ -1,17 +1,17 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #0b0f1a;
   color: white;
   text-align: center;
 }
 
-/* 🚨 FLASHING TOP BAR */
+/* 🚨 FLASHING HEADER */
 .topbar {
   background: red;
   padding: 12px;
   font-weight: bold;
-  animation: flash 0.8s infinite;
+  animation: flash 0.7s infinite;
 }
 
 @keyframes flash {
@@ -21,30 +21,46 @@ body {
 }
 
 .user {
-  margin-top: 15px;
   color: #ffcc00;
+  margin: 10px;
 }
 
 .container {
-  padding: 20px;
-}
-
-.card {
-  margin-top: 20px;
-  background: rgba(255,255,255,0.05);
-  padding: 25px;
-  border-radius: 12px;
-  display: inline-block;
+  padding: 10px;
 }
 
 button {
-  padding: 10px 15px;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  margin-top: 10px;
-  border-radius: 8px;
 }
 
 .hidden {
   display: none;
+}
+
+/* 🗺️ MAP */
+#map {
+  height: 300px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+/* 🌍 LIST */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 4px;
+}
+
+/* INPUT */
+input {
+  padding: 8px;
+  margin-top: 10px;
+  width: 80%;
 }
