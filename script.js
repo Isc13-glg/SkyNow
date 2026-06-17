@@ -37,7 +37,7 @@ search?.addEventListener("input", (e) => {
   renderCities(filtered);
 });
 
-// ☀️ UV message text
+// ☀️ UV message
 function getMessage(uv) {
   if (uv <= 2) return "🧊 Safe UV level.";
   if (uv <= 5) return "😎 Moderate UV.";
@@ -46,9 +46,8 @@ function getMessage(uv) {
   return "☠️ CRITICAL DANGER.";
 }
 
-// 🎤 FIXED iPHONE SPEECH (MOST IMPORTANT PART)
+// 🎤 iPHONE SAFE VOICE
 function speakUV(uv) {
-
   if (!("speechSynthesis" in window)) return;
 
   window.speechSynthesis.cancel();
@@ -64,13 +63,11 @@ function speakUV(uv) {
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "en-US";
   msg.rate = 1;
-  msg.pitch = 1;
 
-  // 🔥 iPhone SAFARI FIX: speak immediately inside user action flow
   window.speechSynthesis.speak(msg);
 }
 
-// 🔊 ALARM
+// 🔊 alarm
 function playAlarm(uv) {
   if (uv >= 7 && audioUnlocked) {
     alarm.currentTime = 0;
@@ -78,7 +75,7 @@ function playAlarm(uv) {
   }
 }
 
-// 🗺️ MAP SAFE FOR ALL BROWSERS
+// 🗺️ map
 function initMap(lat, lon) {
 
   if (map) map.remove();
@@ -99,14 +96,14 @@ function initMap(lat, lon) {
   }, 300);
 }
 
-// 🚀 START SCAN (CRITICAL ORDER FIX FOR iPHONE)
+// 🚀 START (CURRENT UV FIX)
 startBtn.addEventListener("click", () => {
 
   statusText.textContent = "Activating system...";
 
   audioUnlocked = true;
 
-  // 🔓 unlock audio system (iPhone requirement)
+  // unlock iPhone audio
   alarm.play().then(() => {
     alarm.pause();
     alarm.currentTime = 0;
@@ -117,27 +114,31 @@ startBtn.addEventListener("click", () => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=uv_index_max&timezone=auto`;
+    // ☀️ CURRENT UV API (NOT DAILY MAX)
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&timezone=auto`;
 
     try {
 
       const res = await fetch(url);
       const data = await res.json();
 
-      const uv = data?.daily?.uv_index_max?.[0] ?? 0;
+      // 📍 CURRENT HOUR UV
+      const times = data.hourly.time;
+      const values = data.hourly.uv_index;
 
-      // ✅ UI update
+      const now = new Date().toISOString().slice(0, 13);
+      const index = times.findIndex(t => t.startsWith(now));
+
+      const uv = values[index] ?? 0;
+
       statusText.style.display = "none";
       result.classList.remove("hidden");
 
-      uvValue.textContent = `UV INDEX: ${uv}`;
+      uvValue.textContent = `UV INDEX (NOW): ${uv}`;
       message.textContent = getMessage(uv);
 
       initMap(lat, lon);
-
-      // 🔥 IMPORTANT: SPEECH MUST RUN IMMEDIATELY
       speakUV(uv);
-
       playAlarm(uv);
 
     } catch (e) {
