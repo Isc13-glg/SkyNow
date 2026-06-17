@@ -17,6 +17,7 @@ body {
   padding: 10px;
   font-weight: bold;
   animation: blink 1s infinite;
+  border-radius: 6px;
 }
 
 @keyframes blink {
@@ -33,7 +34,7 @@ button {
 }
 
 #map {
-  height: 280px;   /* 🔥 CRITICAL FIX */
+  height: 280px;
   width: 100%;
   margin-top: 15px;
   border-radius: 12px;
