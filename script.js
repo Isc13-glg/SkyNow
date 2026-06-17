@@ -8,7 +8,7 @@ const alarm = document.getElementById("alarm");
 const cityList = document.getElementById("cityList");
 const search = document.getElementById("search");
 
-// 🌍 small sample (alphabetical Europe incl. Paphos)
+// 🌍 Europe cities (alphabetical incl. Paphos)
 const cities = [
   "Amsterdam", "Athens", "Berlin", "Brussels", "Bucharest",
   "Budapest", "Copenhagen", "Dublin", "Helsinki", "Kyiv",
@@ -27,74 +27,115 @@ function renderCities(list) {
 
 renderCities(cities);
 
-// search filter
-search?.addEventListener("input", e => {
+search?.addEventListener("input", (e) => {
   const filtered = cities.filter(c =>
     c.toLowerCase().includes(e.target.value.toLowerCase())
   );
   renderCities(filtered);
 });
 
-// UV messages
+// ☀️ UV messages (Greek prank style)
 function getMsg(uv) {
-  if (uv <= 2) return "🧊 Safe zone. Κυριακή Ανδρέου may proceed.";
-  if (uv <= 5) return "😎 Moderate UV. Some risk detected.";
-  if (uv <= 7) return "☀️ High UV. Protective action advised.";
-  if (uv <= 10) return "🔥 EXTREME UV ALERT — STAY INDOORS.";
-  return "☠️ CRITICAL RADIATION LEVEL — SYSTEM WARNING";
+  if (uv <= 2) return "🧊 Safe zone. Κυριακή Ανδρέου μπορεί να κυκλοφορεί.";
+  if (uv <= 5) return "😎 Moderate UV. Βάλε λίγο αντηλιακό.";
+  if (uv <= 7) return "☀️ Προσοχή. Ο ήλιος δεν αστειεύεται.";
+  if (uv <= 10) return "🔥 EXTREME UV — ΜΗΝ ΠΑΣ ΕΞΩ.";
+  return "☠️ ΚΡΙΣΙΜΟ ΕΠΙΠΕΔΟ — SYSTEM ALERT";
 }
 
-// SOUND
+// 🔊 alarm
 function playAlarm() {
-  alarm.play();
+  alarm.play().catch(()=>{});
 }
 
-// MAP
+// 🗺️ MAP + MOVING DANGER ZONE
 let map;
+let dangerCircle;
 
-function initMap(lat, lon) {
-  map = L.map('map').setView([lat, lon], 10);
+function initMap(lat, lon, uv) {
+
+  map = L.map('map').setView([lat, lon], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  L.marker([lat, lon]).addTo(map)
-    .bindPopup("You are here (UV monitored zone)")
+  L.marker([lat, lon])
+    .addTo(map)
+    .bindPopup("📍 You are here (UV monitored zone)")
     .openPopup();
-}
 
-// START BUTTON (fixes iPhone issue)
-startBtn.addEventListener("click", () => {
+  // 🔴 DANGER ZONE OVERLAY (PULSING CIRCLE)
+  let radius = uv * 200; // UV controls danger radius
 
-  status.textContent = "Requesting location...";
+  dangerCircle = L.circle([lat, lon], {
+    radius: radius,
+    color: "red",
+    fillColor: "#ff0000",
+    fillOpacity: 0.25
+  }).addTo(map);
 
-  navigator.geolocation.getCurrentPosition(async (pos) => {
+  // 🔥 ANIMATION (pulsing effect)
+  let grow = true;
 
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+  setInterval(() => {
+    if (!dangerCircle) return;
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=uv_index_max&timezone=auto`;
+    let current = dangerCircle.getRadius();
 
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const uv = data.daily.uv_index_max[0];
-
-    status.style.display = "none";
-    panel.classList.remove("hidden");
-
-    uvText.textContent = `UV INDEX: ${uv}`;
-    warning.textContent = getMsg(uv);
-
-    initMap(lat, lon);
-
-    if (uv >= 7) {
-      playAlarm();
+    if (grow) {
+      current += 40;
+      if (current > uv * 400) grow = false;
+    } else {
+      current -= 40;
+      if (current < uv * 150) grow = true;
     }
 
-  }, () => {
-    status.textContent = "Location blocked. Enable permissions in Safari settings.";
-  });
+    dangerCircle.setRadius(current);
+
+  }, 120);
+}
+
+// 🚀 START SYSTEM (works on Safari + Chrome iPhone/Android)
+startBtn.addEventListener("click", () => {
+
+  status.textContent = "Scanning location...";
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=uv_index_max&timezone=auto`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const uv = data.daily.uv_index_max[0];
+
+      status.style.display = "none";
+      panel.classList.remove("hidden");
+
+      uvText.textContent = `UV INDEX: ${uv}`;
+      warning.textContent = getMsg(uv);
+
+      initMap(lat, lon, uv);
+
+      if (uv >= 7) {
+        playAlarm();
+      }
+
+    },
+    (err) => {
+      console.log(err);
+      status.textContent = "❌ Enable location permissions in browser settings.";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
 
 });
