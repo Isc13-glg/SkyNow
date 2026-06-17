@@ -37,7 +37,7 @@ search?.addEventListener("input", (e) => {
   renderCities(filtered);
 });
 
-// ☀️ UV messages
+// ☀️ UV text
 function getMessage(uv) {
   if (uv <= 2) return "🧊 Safe UV level.";
   if (uv <= 5) return "😎 Moderate UV.";
@@ -46,17 +46,11 @@ function getMessage(uv) {
   return "☠️ CRITICAL DANGER.";
 }
 
-//
-// 🎤 FIXED iPhone + ALL BROWSERS VOICE
-//
+// 🎤 FIXED iPhone voice
 function speakUV(uv) {
-
   if (!("speechSynthesis" in window)) return;
 
-  // IMPORTANT FIX FOR iOS: cancel + resume
   window.speechSynthesis.cancel();
-
-  const msg = new SpeechSynthesisUtterance();
 
   let text = `UV index is ${uv}.`;
 
@@ -66,11 +60,10 @@ function speakUV(uv) {
   else if (uv <= 10) text += " Extreme UV detected.";
   else text += " Critical danger level.";
 
-  msg.text = text;
+  const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "en-US";
   msg.rate = 1;
 
-  // 🔥 iPhone FIX: small delay helps Safari actually speak
   setTimeout(() => {
     window.speechSynthesis.speak(msg);
   }, 150);
@@ -84,16 +77,7 @@ function playAlarm(uv) {
   }
 }
 
-// 📳 vibration (Android only)
-function vibratePhone(uv) {
-  if (!("vibrate" in navigator)) return;
-
-  if (uv >= 7) {
-    navigator.vibrate([200, 100, 200, 100, 500]);
-  }
-}
-
-// 🗺️ map
+// 🗺️ map fix
 function initMap(lat, lon) {
 
   if (map) map.remove();
@@ -114,24 +98,18 @@ function initMap(lat, lon) {
   }, 300);
 }
 
-// 🚀 START BUTTON
+// 🚀 START (FIXED FLOW — NO STUCK STATUS)
 startBtn.addEventListener("click", () => {
 
   statusText.textContent = "Activating system...";
 
-  // 🔓 unlock audio (CRITICAL FOR iPHONE)
   audioUnlocked = true;
 
-  // force audio permission unlock
+  // unlock audio for mobile
   alarm.play().then(() => {
     alarm.pause();
     alarm.currentTime = 0;
   }).catch(() => {});
-
-  // also unlock speech on iOS
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
 
@@ -145,6 +123,7 @@ startBtn.addEventListener("click", () => {
 
     const uv = data.daily.uv_index_max[0];
 
+    // ✅ FIX: UI always continues (no stuck loading)
     statusText.style.display = "none";
     result.classList.remove("hidden");
 
@@ -152,11 +131,8 @@ startBtn.addEventListener("click", () => {
     message.textContent = getMessage(uv);
 
     initMap(lat, lon);
-
-    // 🔥 ALL ALERT SYSTEMS
-    speakUV(uv);       // FIXED iPhone speech
+    speakUV(uv);
     playAlarm(uv);
-    vibratePhone(uv);
 
   }, () => {
     statusText.textContent = "Location permission denied.";
