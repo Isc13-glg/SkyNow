@@ -8,8 +8,9 @@ const cityList = document.getElementById("cityList");
 const search = document.getElementById("search");
 
 let map;
+let audioUnlocked = false;
 
-// 🌍 European cities (alphabetical incl. Paphos)
+// 🌍 Cities (alphabetical incl. Paphos)
 const cities = [
   "Amsterdam","Athens","Berlin","Brussels","Bucharest",
   "Budapest","Copenhagen","Dublin","Helsinki","Kyiv",
@@ -45,7 +46,7 @@ function getMessage(uv) {
   return "☠️ CRITICAL DANGER.";
 }
 
-// 🎤 VOICE OUTPUT
+// 🎤 VOICE SYSTEM
 function speakUV(uv) {
   let text = `UV index is ${uv}.`;
 
@@ -62,18 +63,19 @@ function speakUV(uv) {
   window.speechSynthesis.speak(speech);
 }
 
-// 🔊 ALARM
+// 🔊 ALARM (FIXED FOR MOBILE)
 function playAlarm(uv) {
-  if (uv >= 7) {
+  if (uv >= 7 && audioUnlocked) {
+    alarm.currentTime = 0;
     alarm.play().catch(() => {});
   }
 }
 
-// 🗺️ MAP (FIXED FOR CHROME/SAFARI)
+// 🗺️ MAP (Chrome + Safari FIXED)
 function initMap(lat, lon) {
 
   if (map) {
-    map.remove(); // prevent duplicate map bugs
+    map.remove();
   }
 
   map = L.map("map").setView([lat, lon], 13);
@@ -88,14 +90,23 @@ function initMap(lat, lon) {
     .openPopup();
 
   setTimeout(() => {
-    map.invalidateSize(); // IMPORTANT FIX
+    map.invalidateSize();
   }, 300);
 }
 
-// 🚀 START BUTTON
+// 🚀 START SCAN BUTTON
 startBtn.addEventListener("click", () => {
 
-  statusText.textContent = "Scanning location...";
+  statusText.textContent = "Unlocking sensors...";
+
+  // 🔓 IMPORTANT: unlock audio for mobile
+  audioUnlocked = true;
+
+  // trick browsers into enabling sound
+  alarm.play().then(() => {
+    alarm.pause();
+    alarm.currentTime = 0;
+  }).catch(() => {});
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
 
