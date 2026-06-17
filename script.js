@@ -1,150 +1,53 @@
-const startBtn = document.getElementById("startBtn");
-const statusText = document.getElementById("status");
-const uvValue = document.getElementById("uvValue");
-const message = document.getElementById("message");
-const result = document.getElementById("result");
-const alarm = document.getElementById("alarm");
-const cityList = document.getElementById("cityList");
-const search = document.getElementById("search");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UV Monitoring System</title>
 
-let map;
-let audioUnlocked = false;
+<link rel="stylesheet" href="style.css"/>
 
-// 🌍 Cities
-const cities = [
-  "Amsterdam","Athens","Berlin","Brussels","Bucharest",
-  "Budapest","Copenhagen","Dublin","Helsinki","Kyiv",
-  "Lisbon","London","Madrid","Nicosia","Oslo",
-  "Paris","Paphos","Prague","Rome","Sofia","Vienna","Warsaw"
-].sort();
+<!-- 🗺️ Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
 
-function renderCities(list = cities) {
-  cityList.innerHTML = "";
-  list.forEach(c => {
-    const li = document.createElement("li");
-    li.textContent = c;
-    cityList.appendChild(li);
-  });
-}
+<body>
 
-renderCities();
+<div class="topbar">
+  🚨UV MONITORING SYSTEM — CLASSIFIED ALERT
+</div>
 
-// 🔎 search
-search?.addEventListener("input", (e) => {
-  const filtered = cities.filter(c =>
-    c.toLowerCase().includes(e.target.value.toLowerCase())
-  );
-  renderCities(filtered);
-});
+<h2 class="user">Welcome to our UV monitoring system</h2>
 
-// ☀️ UV message
-function getMessage(uv) {
-  if (uv <= 2) return "🧊 Safe UV level.";
-  if (uv <= 5) return "😎 Moderate UV.";
-  if (uv <= 7) return "☀️ High UV warning.";
-  if (uv <= 10) return "🔥 EXTREME UV.";
-  return "☠️ CRITICAL DANGER.";
-}
+<div class="container">
 
-// 🎤 iPhone-safe voice
-function speakUV(uv) {
-  if (!("speechSynthesis" in window)) return;
+  <!-- ☀️ TOP OF DAY BANNER -->
+  <p id="topOfDay" class="top-day"></p>
 
-  window.speechSynthesis.cancel();
+  <button id="startBtn">START SCAN</button>
 
-  let text = `UV index is ${uv}.`;
+  <p id="status">Waiting for activation...</p>
 
-  if (uv <= 2) text += " Low risk.";
-  else if (uv <= 5) text += " Moderate exposure.";
-  else if (uv <= 7) text += " High UV warning.";
-  else if (uv <= 10) text += " Extreme UV detected.";
-  else text += " Critical danger level.";
+  <div id="result" class="hidden">
 
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "en-US";
-  msg.rate = 1;
+    <h2 id="uvValue"></h2>
+    <p id="message"></p>
 
-  window.speechSynthesis.speak(msg);
-}
+    <div id="map"></div>
 
-// 🔊 ALARM (ONLY ≥ 6.5 UV)
-function playAlarm(uv) {
-  if (uv >= 6.5 && audioUnlocked) {
-    alarm.currentTime = 0;
-    alarm.play().catch(() => {});
-  }
-}
+    <h3>European Monitoring Grid</h3>
+    <input id="search" placeholder="Search city..." />
+    <ul id="cityList"></ul>
 
-// 🗺️ MAP
-function initMap(lat, lon) {
+  </div>
 
-  if (map) map.remove();
+</div>
 
-  map = L.map("map").setView([lat, lon], 13);
+<audio id="alarm">
+  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
-
-  L.marker([lat, lon])
-    .addTo(map)
-    .bindPopup("📍 You are here")
-    .openPopup();
-
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 300);
-}
-
-// 🚀 START (CURRENT UV FIXED)
-startBtn.addEventListener("click", () => {
-
-  statusText.textContent = "Activating system...";
-
-  audioUnlocked = true;
-
-  // 🔓 unlock iPhone audio
-  alarm.play().then(() => {
-    alarm.pause();
-    alarm.currentTime = 0;
-  }).catch(() => {});
-
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&timezone=auto`;
-
-    try {
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      const times = data.hourly.time;
-      const values = data.hourly.uv_index;
-
-      const now = new Date().toISOString().slice(0, 13);
-      const index = times.findIndex(t => t.startsWith(now));
-
-      const uv = values[index] ?? 0;
-
-      statusText.style.display = "none";
-      result.classList.remove("hidden");
-
-      uvValue.textContent = `UV INDEX (NOW): ${uv}`;
-      message.textContent = getMessage(uv);
-
-      initMap(lat, lon);
-      speakUV(uv);
-      playAlarm(uv);
-
-    } catch (e) {
-      statusText.textContent = "UV system failed — retry.";
-    }
-
-  }, () => {
-    statusText.textContent = "Location permission denied.";
-  });
-
-});
+<script src="script.js"></script>
+</body>
+</html>
