@@ -62,9 +62,11 @@ function speakUV(uv) {
   window.speechSynthesis.speak(msg);
 }
 
-// 🔊 alarm
+// 🔊 ALARM (FIXED: ONLY ≥ 6.5)
 function playAlarm(uv) {
-  if (uv >= 6.5 && audioUnlocked) {
+  const value = Number(uv);
+
+  if (value >= 6.5 && audioUnlocked) {
     alarm.currentTime = 0;
     alarm.play().catch(() => {});
   }
@@ -72,6 +74,7 @@ function playAlarm(uv) {
 
 // 🗺️ map
 function initMap(lat, lon) {
+
   if (map) map.remove();
 
   map = L.map("map").setView([lat, lon], 13);
@@ -89,7 +92,6 @@ function initMap(lat, lon) {
 startBtn.addEventListener("click", () => {
 
   statusText.textContent = "Activating system...";
-
   audioUnlocked = true;
 
   alarm.play().then(() => {
@@ -102,13 +104,13 @@ startBtn.addEventListener("click", () => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
-    // ☀️ REAL FIXED UV REQUEST
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index,cloud_cover&timezone=auto`;
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index,cloud_cover&timezone=auto`;
 
     const res = await fetch(url);
     const data = await res.json();
 
-    // ⏱️ closest time matching (FIX)
+    // ⏱️ closest match
     const times = data.hourly.time;
     const uvArr = data.hourly.uv_index;
     const cloudArr = data.hourly.cloud_cover;
@@ -141,7 +143,8 @@ startBtn.addEventListener("click", () => {
     uvValue.textContent = `UV Index: ${uv}`;
     message.textContent = getMessage(uv);
 
-    topOfDay.textContent = `☀️ Today's peak UV in your area is ${uv}`;
+    topOfDay.textContent =
+      `☀️ Today's peak UV in your area is ${uv}`;
 
     initMap(lat, lon);
     speakUV(uv);
