@@ -3,30 +3,27 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>UV Monitoring System</title>
+<title>World UV System</title>
 
 <link rel="stylesheet" href="style.css"/>
 
-<!-- Leaflet map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-<div class="topbar">
-  🚨 UV MONITORING SYSTEM 🚨
-</div>
+<div class="topbar">🌍 WORLD UV MONITORING SYSTEM</div>
 
-<h2 class="user">User: Σκαπούλη Πετρούλλα</h2>
+<h3>User: Σκαπούλη Πετρούλλα</h3>
 
 <div class="container">
 
-  <p id="topOfDay" class="top-day"></p>
+  <p id="topOfDay"></p>
 
-  <button id="startBtn">START SCAN</button>
+  <button id="startBtn">USE MY LOCATION</button>
 
-  <p id="status">Waiting for activation...</p>
+  <p id="status">Waiting...</p>
 
   <div id="result" class="hidden">
 
@@ -35,16 +32,15 @@
 
     <div id="map"></div>
 
-    <h3>European Cities</h3>
-    <input id="search" placeholder="Search city..." />
-    <ul id="cityList"></ul>
+    <h3>🌍 Search Country</h3>
+    <input id="countrySearch" placeholder="Type country..." />
+    <ul id="countryList"></ul>
 
   </div>
-
 </div>
 
 <audio id="alarm" preload="auto">
-  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
 </audio>
 
 <script src="script.js"></script>
