@@ -1,34 +1,41 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #0b0f1a;
   color: white;
-  text-align: center;
 }
 
-/* 🚨 FLASHING HEADER */
+/* 🚨 TOP WARNING BAR */
 .topbar {
   background: red;
   padding: 12px;
   font-weight: bold;
-  animation: flash 0.7s infinite;
+  text-align: center;
+  animation: flash 0.8s infinite;
 }
 
 @keyframes flash {
   0% { opacity: 1; }
-  50% { opacity: 0.3; }
+  50% { opacity: 0.4; }
   100% { opacity: 1; }
 }
 
+/* 👤 USER TEXT */
 .user {
+  text-align: center;
   color: #ffcc00;
-  margin: 10px;
+  margin: 10px 0;
 }
 
+/* 📦 MAIN CONTAINER (FIX CHROME WIDE ISSUE) */
 .container {
+  max-width: 600px;
+  margin: 0 auto;
   padding: 10px;
+  text-align: center;
 }
 
+/* 🔘 BUTTON */
 button {
   padding: 12px;
   margin: 10px;
@@ -37,30 +44,35 @@ button {
   cursor: pointer;
 }
 
-.hidden {
-  display: none;
-}
-
-/* 🗺️ MAP */
+/* 🗺️ MAP (CRITICAL FIX — MAP WILL NOT SHOW WITHOUT HEIGHT) */
 #map {
-  height: 300px;
+  width: 100%;
+  height: 320px;
   margin-top: 10px;
   border-radius: 10px;
+  overflow: hidden;
 }
 
-/* 🌍 LIST */
+/* 🌍 CITY LIST */
 ul {
   list-style: none;
   padding: 0;
 }
 
 li {
-  padding: 4px;
+  padding: 3px;
 }
 
-/* INPUT */
+/* 🔎 SEARCH BOX */
 input {
   padding: 8px;
+  width: 90%;
   margin-top: 10px;
-  width: 80%;
+  border-radius: 6px;
+  border: none;
+}
+
+/* ❌ HIDE ELEMENTS */
+.hidden {
+  display: none;
 }
