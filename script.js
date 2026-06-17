@@ -46,7 +46,7 @@ function getMessage(uv) {
   return "☠️ CRITICAL DANGER.";
 }
 
-// 🎤 iPHONE SAFE VOICE
+// 🎤 iPhone-safe voice
 function speakUV(uv) {
   if (!("speechSynthesis" in window)) return;
 
@@ -67,15 +67,15 @@ function speakUV(uv) {
   window.speechSynthesis.speak(msg);
 }
 
-// 🔊 alarm
+// 🔊 ALARM (ONLY ≥ 6.5 UV)
 function playAlarm(uv) {
-  if (uv >= 7 && audioUnlocked) {
+  if (uv >= 6.5 && audioUnlocked) {
     alarm.currentTime = 0;
     alarm.play().catch(() => {});
   }
 }
 
-// 🗺️ map
+// 🗺️ MAP
 function initMap(lat, lon) {
 
   if (map) map.remove();
@@ -96,14 +96,14 @@ function initMap(lat, lon) {
   }, 300);
 }
 
-// 🚀 START (CURRENT UV FIX)
+// 🚀 START (CURRENT UV FIXED)
 startBtn.addEventListener("click", () => {
 
   statusText.textContent = "Activating system...";
 
   audioUnlocked = true;
 
-  // unlock iPhone audio
+  // 🔓 unlock iPhone audio
   alarm.play().then(() => {
     alarm.pause();
     alarm.currentTime = 0;
@@ -114,7 +114,6 @@ startBtn.addEventListener("click", () => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
-    // ☀️ CURRENT UV API (NOT DAILY MAX)
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&timezone=auto`;
 
     try {
@@ -122,7 +121,6 @@ startBtn.addEventListener("click", () => {
       const res = await fetch(url);
       const data = await res.json();
 
-      // 📍 CURRENT HOUR UV
       const times = data.hourly.time;
       const values = data.hourly.uv_index;
 
