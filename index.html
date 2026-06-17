@@ -7,7 +7,7 @@
 
 <link rel="stylesheet" href="style.css"/>
 
-<!-- 🗺️ Leaflet -->
+<!-- 🗺️ Leaflet (MUST LOAD BEFORE SCRIPT) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
@@ -22,7 +22,7 @@
 
 <div class="container">
 
-  <!-- ☀️ TOP OF DAY BANNER -->
+  <!-- ☀️ TOP OF DAY -->
   <p id="topOfDay" class="top-day"></p>
 
   <button id="startBtn">START SCAN</button>
@@ -34,6 +34,7 @@
     <h2 id="uvValue"></h2>
     <p id="message"></p>
 
+    <!-- 🗺️ MAP (IMPORTANT: must NOT be hidden initially) -->
     <div id="map"></div>
 
     <h3>European Monitoring Grid</h3>
@@ -44,7 +45,8 @@
 
 </div>
 
-<audio id="alarm">
+<!-- 🔊 SOUND -->
+<audio id="alarm" preload="auto">
   <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
 </audio>
 
