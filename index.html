@@ -3,48 +3,72 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EU UV Emergency System</title>
+<title>EU Emergency Control Center</title>
 
 <link rel="stylesheet" href="style.css"/>
 
-<!-- Leaflet map -->
+<!-- Leaflet Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-<div class="container">
-
-  <!-- FAKE GOVERNMENT HEADER -->
-  <div class="alert-banner">
-    🚨 EUROPEAN UV MONITORING SYSTEM — CLASSIFIED ALERT 🚨
-  </div>
-
-  <h2 id="nameTag">User: Σκαπούλη πετρούλλα with phone number 99893998 με τον σύζυγο Ανδρέα Ανδρέου και με 3 (τρία) παιδια </h2>
-
-  <button id="startBtn">📍 Enable Location & Start Scan</button>
-
-  <p id="status">Waiting for activation...</p>
-
-  <div id="panel" class="hidden">
-
-    <h1 id="uvText"></h1>
-    <p id="warning"></p>
-
-    <div id="map"></div>
-
-    <h3>🌍 European Cities</h3>
-    <input id="search" placeholder="Search city..." />
-
-    <ul id="cityList"></ul>
-
-  </div>
+<!-- TOP EMERGENCY BAR -->
+<div class="topbar">
+  🚨 EU EMERGENCY CONTROL CENTER — LIVE SOLAR MONITORING SYSTEM
 </div>
 
-<audio id="alarm">
-  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
-</audio>
+<div class="container">
+
+  <div class="grid">
+
+    <!-- LEFT PANEL -->
+    <div class="panel">
+
+      <h2>📡 Radar System</h2>
+
+      <div class="radar">
+        <div class="scan"></div>
+      </div>
+
+      <h3 id="threatLevel">THREAT LEVEL: INITIALIZING</h3>
+
+      <p id="status">Waiting for activation...</p>
+
+      <button id="startBtn">START LIVE SCAN</button>
+
+      <audio id="alarm">
+        <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+      </audio>
+
+    </div>
+
+    <!-- CENTER PANEL (MAP) -->
+    <div class="panel">
+
+      <h2>🗺️ Live UV Surveillance Map</h2>
+
+      <div id="map"></div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel">
+
+      <h2>⚠️ System Alerts</h2>
+
+      <p id="warning">No active solar threats detected</p>
+
+      <h3>🌍 European Monitoring Grid</h3>
+
+      <ul id="cityList"></ul>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script src="script.js"></script>
 </body>
