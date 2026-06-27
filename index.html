@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Weather Pro</title>
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<!-- 🌟 FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- 🗺 MAP -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
 
+<!-- 🌟 WELCOME SCREEN -->
+<div id="welcome">
+  <div class="welcomeCard">
+    <h1>🌤 Weather Pro</h1>
+    <p>Loading your experience...</p>
+  </div>
+</div>
+
+<!-- 🌈 BACKGROUND -->
 <div id="bg"></div>
 
 <div class="app">
 
-  <h1>🌤 Weather Pro</h1>
+  <h1 class="title">Weather Pro</h1>
 
-  <button id="startBtn">📍 My Location</button>
-  <button id="manualBtn">🌍 Manual</button>
+  <div class="controls">
+    <button id="startBtn">📍 My Location</button>
+    <button id="manualBtn">🌍 Manual</button>
+  </div>
 
   <div id="status">Choose a mode</div>
 
@@ -30,7 +48,7 @@
 
   <div id="loader" class="hidden"></div>
 
-  <!-- HERO CARD -->
+  <!-- HERO -->
   <div id="mainCard" class="glass hidden">
     <div id="bigTemp">--°</div>
     <div id="conditionText">--</div>
@@ -41,14 +59,13 @@
 
     <div class="card">🌡️ <span id="temp"></span></div>
     <div class="card">🤗 <span id="feels"></span></div>
-
-    <div class="card" id="uvCard">☀️ <span id="uv"></span></div>
-
+    <div class="card">☀️ <span id="uv"></span></div>
     <div class="card">💨 <span id="wind"></span></div>
     <div class="card">💧 <span id="hum"></span></div>
     <div class="card">👁️ <span id="vis"></span></div>
 
     <div class="card wide" id="sun"></div>
+
     <div class="card wide">
       <div id="map"></div>
     </div>
