@@ -1,3 +1,4 @@
+
 const startBtn = document.getElementById("startBtn");
 const manualBtn = document.getElementById("manualBtn");
 const loadManual = document.getElementById("loadManual");
@@ -25,6 +26,7 @@ const sun = document.getElementById("sun");
 const bg = document.getElementById("bg");
 
 const mapToggle = document.getElementById("mapToggle");
+const mapClose = document.getElementById("mapClose");
 const mapContainer = document.getElementById("mapContainer");
 
 let map;
@@ -47,7 +49,7 @@ locations.forEach(l=>{
   countrySelect.appendChild(o);
 });
 
-/* WEATHER */
+/* WEATHER TEXT */
 function weatherText(code){
   if(code===0) return "Clear Sky";
   if(code<=3) return "Cloudy";
@@ -59,7 +61,7 @@ function weatherText(code){
 function setBackground(code){
   let g="linear-gradient(180deg,#4facfe,#00f2fe)";
   if(code<=3) g="linear-gradient(180deg,#8e9eab,#eef2f3)";
-  if(code>3) g="linear-gradient(180deg,#1c1c1c,#000)";
+  if(code>3) g="linear-gradient(180deg,#1a1a1a,#000)";
   bg.style.background=g;
 }
 
@@ -75,7 +77,7 @@ function loadMap(lat,lon){
 
   L.marker([lat,lon]).addTo(map);
 
-  map.on("click", async (e)=> {
+  map.on("click", (e)=>{
     loadWeather(e.latlng.lat, e.latlng.lng);
   });
 }
@@ -114,7 +116,7 @@ async function getWeather(lat,lon){
   };
 }
 
-/* LOAD */
+/* LOAD WEATHER */
 async function loadWeather(lat,lon){
 
   loader.classList.remove("hidden");
@@ -133,40 +135,52 @@ async function loadWeather(lat,lon){
   bigTemp.textContent = `${w.temp}°`;
   conditionText.textContent = weatherText(w.code);
 
-  temp.textContent = `${w.temp}°C`;
-  feels.textContent = `${w.feels}°C`;
+  temp.textContent = w.temp;
+  feels.textContent = w.feels;
   uv.textContent = w.uv;
   wind.textContent = w.wind;
   hum.textContent = w.hum;
   vis.textContent = w.vis;
 
-  sun.innerHTML = `🌅 ${w.sunrise.split("T")[1]}<br>🌇 ${w.sunset.split("T")[1]}`;
+  sun.innerHTML =
+    `🌅 Sunrise: ${w.sunrise.split("T")[1]}<br>` +
+    `🌇 Sunset: ${w.sunset.split("T")[1]}`;
 
   setBackground(w.code);
 }
 
 /* BUTTONS */
-startBtn.onclick = async ()=>{
+startBtn.onclick = () => {
   navigator.geolocation.getCurrentPosition(p=>{
     loadWeather(p.coords.latitude,p.coords.longitude);
   });
 };
 
-manualBtn.onclick = ()=> manualBox.classList.toggle("hidden");
+manualBtn.onclick = () => manualBox.classList.toggle("hidden");
 
-loadManual.onclick = ()=>{
+loadManual.onclick = () => {
   const l = JSON.parse(countrySelect.value);
   loadWeather(l.lat,l.lon);
 };
 
-/* MAP TOGGLE */
-mapToggle.onclick = ()=>{
-  expanded = !expanded;
-  mapContainer.classList.toggle("expanded",expanded);
-  setTimeout(()=> map.invalidateSize(),300);
+/* MAP CONTROLS */
+mapToggle.onclick = () => {
+  expanded = true;
+  mapContainer.classList.add("expanded");
+  mapClose.classList.remove("hidden");
+  setTimeout(()=>map.invalidateSize(),300);
 };
 
-/* START */
-window.onload = ()=>{
-  setTimeout(()=>document.getElementById("welcome").style.display="none",1500);
+mapClose.onclick = () => {
+  expanded = false;
+  mapContainer.classList.remove("expanded");
+  mapClose.classList.add("hidden");
+  setTimeout(()=>map.invalidateSize(),300);
+};
+
+/* INTRO */
+window.onload = () => {
+  setTimeout(()=>{
+    document.getElementById("welcome").style.display="none";
+  },1500);
 };
