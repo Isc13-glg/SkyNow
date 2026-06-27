@@ -1,4 +1,3 @@
-
 const startBtn = document.getElementById("startBtn");
 const status = document.getElementById("status");
 const card = document.getElementById("card");
@@ -14,25 +13,24 @@ const alarm = document.getElementById("alarm");
 let map;
 let unlocked = false;
 
-// 🔊 iPhone SAFE VOICE
+// 🔊 VOICE (iPhone safe)
 function speak(text){
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "en-US";
   u.rate = 1;
-
   speechSynthesis.cancel();
   speechSynthesis.speak(u);
 }
 
-// ☀️ UV text
+// ☀️ UV TEXT
 function uvText(u){
-  if(u<=2) return "Low UV";
-  if(u<=5) return "Moderate UV";
-  if(u<=7) return "High UV";
-  return "Extreme UV";
+  if(u <= 2) return "Low UV ☁️";
+  if(u <= 5) return "Moderate UV 🌤️";
+  if(u <= 7) return "High UV 🔥";
+  return "Extreme UV 🚨";
 }
 
-// 🔊 alarm ONLY ≥ 6.5
+// 🔊 ALARM
 function playAlarm(uv){
   if(uv >= 6.5 && unlocked){
     alarm.currentTime = 0;
@@ -40,7 +38,7 @@ function playAlarm(uv){
   }
 }
 
-// 🗺 FIX MAP (NO GREY BUG)
+// 🗺️ MAP FIX (NO GREY BUG)
 function loadMap(lat,lon){
 
   setTimeout(()=>{
@@ -58,7 +56,7 @@ function loadMap(lat,lon){
 
     L.marker([lat,lon]).addTo(map);
 
-    setTimeout(()=>map.invalidateSize(true),600);
+    setTimeout(()=>map.invalidateSize(true),500);
 
   },300);
 }
@@ -91,11 +89,10 @@ async function getWeather(lat,lon){
   };
 }
 
-// 🚀 START (FIXED iPHONE ISSUE)
-startBtn.onclick = async () => {
+// 🚀 START BUTTON (FIXED)
+startBtn.onclick = () => {
 
   unlocked = true;
-
   status.textContent = "Getting location...";
 
   navigator.geolocation.getCurrentPosition(async pos => {
@@ -110,17 +107,21 @@ startBtn.onclick = async () => {
     card.classList.remove("hidden");
     status.style.display = "none";
 
-    tempBox.textContent = `${w.temp}°C`;
-    uvBox.textContent = `UV ${w.uv}`;
-    windBox.textContent = `${w.wind} km/h`;
-    humBox.textContent = `${w.hum}%`;
+    tempBox.textContent = `🌡️ Temp: ${w.temp}°C`;
+    uvBox.textContent = `☀️ UV: ${w.uv}`;
+    windBox.textContent = `💨 Wind: ${w.wind} km/h`;
+    humBox.textContent = `💧 Humidity: ${w.hum}%`;
 
     msg.textContent = uvText(w.uv);
 
-    speak(`Temperature is ${w.temp} degrees. UV is ${w.uv}`);
+    speak(`Temperature is ${w.temp} degrees. UV index is ${w.uv}`);
 
     playAlarm(w.uv);
 
+  },
+  err => {
+    status.textContent = "Location blocked or unavailable";
+    console.log(err);
   });
 
 };
