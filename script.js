@@ -1,175 +1,63 @@
-
-const startBtn = document.getElementById("startBtn");
-const status = document.getElementById("status");
-const loader = document.getElementById("loader");
-const card = document.getElementById("card");
-
-const tempBox = document.getElementById("temp");
-const feelsBox = document.getElementById("feels");
-const uvBox = document.getElementById("uv");
-const windBox = document.getElementById("wind");
-const humBox = document.getElementById("hum");
-const visBox = document.getElementById("vis");
-const sunBox = document.getElementById("sun");
-const condBox = document.getElementById("cond");
-const msg = document.getElementById("msg");
-
-const alarm = document.getElementById("alarm");
-
-let map;
-let unlocked = false;
-
-// 🔊 voice
-function speak(t){
-  const u = new SpeechSynthesisUtterance(t);
-  u.lang = "en-US";
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0b1220;
+  color: white;
+  text-align: center;
 }
 
-// 💨 wind direction
-function windDir(deg){
-  const dirs = ["N","NE","E","SE","S","SW","W","NW"];
-  return dirs[Math.round(deg/45)%8];
+.bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #4facfe, #0b1220);
+  z-index: -1;
 }
 
-// ☁️ weather condition
-function condition(code){
-  if(code === 0) return "Clear sky ☀️";
-  if(code <= 3) return "Cloudy ⛅";
-  if(code <= 48) return "Fog 🌫️";
-  if(code <= 67) return "Rain 🌧️";
-  if(code <= 82) return "Showers 🌦️";
-  return "Storm ⛈️";
+.app { padding: 15px; }
+
+.title { font-size: 26px; font-weight: bold; }
+
+button {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
 }
 
-// 🔊 alarm
-function playAlarm(uv){
-  if(uv >= 6.5 && unlocked){
-    alarm.currentTime = 0;
-    alarm.play().catch(()=>{});
-  }
+.hidden { display: none; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-// 🗺️ map fix
-function loadMap(lat,lon){
-
-  setTimeout(()=>{
-
-    if(map) map.remove();
-
-    map = L.map("map").setView([lat,lon], 7);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:"© OpenStreetMap"
-    }).addTo(map);
-
-    L.marker([lat,lon]).addTo(map);
-
-    setTimeout(()=>map.invalidateSize(true),500);
-
-  },300);
+.box {
+  background: rgba(255,255,255,0.10);
+  padding: 14px;
+  border-radius: 14px;
+  text-align: left;
 }
 
-// 🌍 weather API
-async function getWeather(lat,lon){
-
-  const url =
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}
-  &hourly=temperature_2m,uv_index,wind_speed_10m,wind_direction_10m,relative_humidity_2m,visibility,apparent_temperature,weather_code
-  &daily=sunrise,sunset
-  &timezone=auto`;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  const now = new Date();
-  const times = data.hourly.time;
-
-  let i = 0, best = 999999;
-
-  for(let x=0;x<times.length;x++){
-    const d = Math.abs(new Date(times[x]) - now);
-    if(d < best){ best = d; i = x; }
-  }
-
-  return {
-    temp: data.hourly.temperature_2m[i],
-    feels: data.hourly.apparent_temperature[i],
-    uv: data.hourly.uv_index[i],
-    wind: data.hourly.wind_speed_10m[i],
-    windDir: data.hourly.wind_direction_10m[i],
-    hum: data.hourly.relative_humidity_2m[i],
-    vis: data.hourly.visibility[i],
-    code: data.hourly.weather_code[i],
-    sunrise: data.daily.sunrise[0],
-    sunset: data.daily.sunset[0]
-  };
+#map {
+  height: 300px;
+  margin-top: 15px;
+  border-radius: 14px;
 }
 
-// 🚀 START BUTTON
-startBtn.onclick = () => {
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255,255,255,0.2);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 15px auto;
+}
 
-  unlocked = true;
-
-  status.textContent = "Getting location...";
-  loader.classList.remove("hidden");
-
-  navigator.geolocation.getCurrentPosition(
-
-    async pos => {
-
-      try {
-
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        loadMap(lat,lon);
-
-        status.textContent = "Loading weather...";
-
-        const w = await getWeather(lat,lon);
-
-        loader.classList.add("hidden");
-        status.style.display = "none";
-        card.classList.remove("hidden");
-
-        tempBox.textContent = `🌡️ Temp: ${w.temp}°C`;
-        feelsBox.textContent = `🤗 Feels: ${w.feels}°C`;
-        uvBox.textContent = `☀️ UV: ${w.uv}`;
-        windBox.textContent = `💨 Wind: ${w.wind} km/h (${windDir(w.windDir)})`;
-        humBox.textContent = `💧 Humidity: ${w.hum}%`;
-        visBox.textContent = `👁️ Visibility: ${w.vis} m`;
-
-        sunBox.innerHTML =
-          `🌅 Sunrise: ${w.sunrise.split("T")[1]}<br>🌇 Sunset: ${w.sunset.split("T")[1]}`;
-
-        condBox.textContent = `☁️ ${condition(w.code)}`;
-
-        msg.textContent = condition(w.code);
-
-        speak(`Weather is ${condition(w.code)}. Temperature is ${w.temp} degrees.`);
-
-        playAlarm(w.uv);
-
-      } catch (e) {
-
-        loader.classList.add("hidden");
-        status.textContent = "Weather loading failed.";
-        console.log(e);
-
-      }
-
-    },
-
-    err => {
-      loader.classList.add("hidden");
-      status.textContent = "Location blocked or unavailable.";
-    },
-
-    {
-      enableHighAccuracy: true
-    }
-
-  );
-};
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
