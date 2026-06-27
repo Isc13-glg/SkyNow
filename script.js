@@ -1,3 +1,4 @@
+
 const startBtn = document.getElementById("startBtn");
 const manualBtn = document.getElementById("manualBtn");
 const loadManual = document.getElementById("loadManual");
@@ -26,7 +27,7 @@ const bg = document.getElementById("bg");
 
 let map;
 
-/* 🌍 fallback locations */
+/* 🌍 locations */
 const locations = [
   {name:"Cyprus", lat:35.1856, lon:33.3823},
   {name:"London", lat:51.5072, lon:-0.1276},
@@ -35,7 +36,6 @@ const locations = [
   {name:"New York", lat:40.7128, lon:-74.0060}
 ];
 
-/* fill dropdown */
 locations.forEach(l=>{
   const o = document.createElement("option");
   o.value = JSON.stringify(l);
@@ -46,40 +46,35 @@ locations.forEach(l=>{
 /* 🌤 weather text */
 function weatherText(code){
   if(code === 0) return "Clear Sky";
-  if(code <= 3) return "Partly Cloudy";
-  if(code <= 48) return "Foggy";
+  if(code <= 3) return "Clouds";
+  if(code <= 48) return "Fog";
   if(code <= 67) return "Rain";
   if(code <= 82) return "Showers";
   return "Storm";
 }
 
-/* 🌈 background changer */
+/* 🌈 background */
 function setBackground(code){
 
-  let bgColor;
+  let g;
 
   if(code === 0){
-    bgColor = "linear-gradient(180deg,#4facfe,#00f2fe)";
-  }
-  else if(code <= 3){
-    bgColor = "linear-gradient(180deg,#8e9eab,#eef2f3)";
-  }
-  else if(code <= 48){
-    bgColor = "linear-gradient(180deg,#3a3a3a,#1c1c1c)";
-  }
-  else if(code <= 67){
-    bgColor = "linear-gradient(180deg,#314755,#26a0da)";
-  }
-  else{
-    bgColor = "linear-gradient(180deg,#0f2027,#203a43,#2c5364)";
+    g = "linear-gradient(180deg,#4facfe,#00f2fe)";
+  } else if(code <= 3){
+    g = "linear-gradient(180deg,#8e9eab,#eef2f3)";
+  } else if(code <= 48){
+    g = "linear-gradient(180deg,#3a3a3a,#1c1c1c)";
+  } else if(code <= 67){
+    g = "linear-gradient(180deg,#314755,#26a0da)";
+  } else {
+    g = "linear-gradient(180deg,#0f2027,#203a43,#2c5364)";
   }
 
-  bg.style.background = bgColor;
+  bg.style.background = g;
 }
 
 /* 🗺 map */
 function loadMap(lat,lon){
-
   if(map) map.remove();
 
   map = L.map("map").setView([lat,lon], 7);
@@ -97,13 +92,11 @@ async function getWeather(lat,lon){
     "https://api.open-meteo.com/v1/forecast" +
     `?latitude=${lat}` +
     `&longitude=${lon}` +
-    "&hourly=temperature_2m,uv_index,wind_speed_10m,wind_direction_10m,relative_humidity_2m,visibility,apparent_temperature,weather_code" +
+    "&hourly=temperature_2m,uv_index,wind_speed_10m,relative_humidity_2m,visibility,apparent_temperature,weather_code" +
     "&daily=sunrise,sunset" +
     "&timezone=auto";
 
   const res = await fetch(url);
-  if(!res.ok) throw new Error("API failed");
-
   const data = await res.json();
 
   const now = new Date();
@@ -113,11 +106,8 @@ async function getWeather(lat,lon){
   let best = Infinity;
 
   for(let x=0;x<times.length;x++){
-    const diff = Math.abs(new Date(times[x]) - now);
-    if(diff < best){
-      best = diff;
-      i = x;
-    }
+    const d = Math.abs(new Date(times[x]) - now);
+    if(d < best){ best = d; i = x; }
   }
 
   return {
@@ -136,15 +126,11 @@ async function getWeather(lat,lon){
 /* 📍 GPS */
 function getLocation(){
   return new Promise(r=>{
-    navigator.geolocation.getCurrentPosition(
-      p=>r(p),
-      ()=>r(null),
-      {timeout:8000}
-    );
+    navigator.geolocation.getCurrentPosition(p=>r(p), ()=>r(null));
   });
 }
 
-/* 🚀 MAIN LOAD FUNCTION */
+/* 🚀 LOAD */
 async function loadWeather(lat,lon){
 
   loader.classList.remove("hidden");
@@ -163,11 +149,10 @@ async function loadWeather(lat,lon){
   bigTemp.textContent = `${w.temp}°`;
   conditionText.textContent = weatherText(w.code);
 
-  /* 🌟 CLEAN APPLE STYLE LABELS (NO EMOJIS IN VALUES) */
   temp.textContent = `Temperature: ${w.temp}°C`;
   feels.textContent = `Feels Like: ${w.feels}°C`;
   uv.textContent = `UV Index: ${w.uv}`;
-  wind.textContent = `Wind Speed: ${w.wind} km/h`;
+  wind.textContent = `Wind: ${w.wind} km/h`;
   hum.textContent = `Humidity: ${w.hum}%`;
   vis.textContent = `Visibility: ${w.vis} m`;
 
@@ -178,25 +163,17 @@ async function loadWeather(lat,lon){
   setBackground(w.code);
 }
 
-/* 📍 GPS BUTTON */
+/* 📍 GPS */
 startBtn.onclick = async ()=>{
+  const p = await getLocation();
 
-  const pos = await getLocation();
-
-  let lat,lon;
-
-  if(pos){
-    lat = pos.coords.latitude;
-    lon = pos.coords.longitude;
-  } else {
-    lat = 35.1856;
-    lon = 33.3823;
-  }
+  let lat = p ? p.coords.latitude : 35.1856;
+  let lon = p ? p.coords.longitude : 33.3823;
 
   loadWeather(lat,lon);
 };
 
-/* 🌍 MANUAL MODE */
+/* 🌍 manual */
 manualBtn.onclick = ()=>{
   manualBox.classList.toggle("hidden");
 };
@@ -205,3 +182,11 @@ loadManual.onclick = ()=>{
   const l = JSON.parse(countrySelect.value);
   loadWeather(l.lat,l.lon);
 };
+
+/* 🟢 remove welcome screen */
+window.addEventListener("load", ()=>{
+  setTimeout(()=>{
+    const w = document.getElementById("welcome");
+    if(w) w.style.display = "none";
+  }, 1600);
+});
