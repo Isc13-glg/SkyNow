@@ -20,25 +20,43 @@ body::before {
   z-index: -1;
 }
 
+/* 🌟 INTRO ANIMATION */
+#welcome {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  z-index: 9999;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 1.5s;
+}
+
+.welcomeCard {
+  animation: pop 0.8s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
 /* APP */
 .app {
   padding: 22px;
   text-align: center;
 }
 
+/* TITLE */
 .title {
   font-size: 34px;
   font-weight: 700;
-}
-
-/* GLASS SYSTEM */
-.glass, .bigBtn, select, #loadManual {
-  background: rgba(255,255,255,0.10);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  animation: fadeIn 0.8s ease;
 }
 
 /* BUTTONS */
@@ -50,45 +68,89 @@ body::before {
 
 .bigBtn {
   padding: 18px;
+  border-radius: 22px;
+  border: none;
   font-size: 16px;
   font-weight: 600;
+  color: white;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
+  transition: 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 .bigBtn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
-/* CARDS */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.card {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(15px);
-  border-radius: 16px;
+/* SMALL BUTTONS */
+.smallBtn {
   padding: 12px;
+  margin-top: 10px;
+}
+
+.secondary {
+  background: rgba(255,255,255,0.08);
+}
+
+.danger {
+  background: rgba(255,80,80,0.25);
+}
+
+/* STATUS ANIMATION */
+#status {
+  margin-top: 10px;
+  opacity: 0.8;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* GLASS */
+.glass {
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(20px);
+  border-radius: 22px;
+  padding: 22px;
+  margin-top: 15px;
+  animation: fadeIn 0.6s ease;
 }
 
 /* HERO */
-.glass {
-  padding: 24px;
-  margin: 16px 0;
-}
-
 #bigTemp {
   font-size: 72px;
   font-weight: 700;
 }
 
+#conditionText {
+  opacity: 0.8;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 12px;
+  animation: fadeIn 0.5s ease;
+}
+
 /* MAP */
 .mapBox {
-  transition: 0.5s ease;
+  margin-top: 15px;
   border-radius: 18px;
   overflow: hidden;
-  margin-top: 12px;
+  transition: all 0.5s ease;
 }
 
 #map {
@@ -108,6 +170,14 @@ body::before {
   height: 100vh;
 }
 
+/* MAP CONTROLS */
+.mapControls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 /* LOADER */
 #loader {
   width: 44px;
@@ -116,7 +186,7 @@ body::before {
   border-top: 4px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 20px auto;
+  margin: 15px auto;
 }
 
 @keyframes spin {
@@ -124,20 +194,3 @@ body::before {
 }
 
 .hidden { display:none; }
-
-/* WELCOME */
-#welcome {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: black;
-  z-index: 9999;
-  animation: fadeOut 1s ease forwards;
-  animation-delay: 1.5s;
-}
-
-@keyframes fadeOut {
-  to { opacity: 0; visibility: hidden; }
-}
