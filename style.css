@@ -2,14 +2,12 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   color: white;
-  overflow-x: hidden;
 }
 
 #bg {
   position: fixed;
   inset: 0;
   z-index: -2;
-  transition: 1s ease;
 }
 
 body::before {
@@ -20,7 +18,6 @@ body::before {
   z-index: -1;
 }
 
-/* APP */
 .app {
   padding: 20px;
   text-align: center;
@@ -28,41 +25,30 @@ body::before {
 
 .title {
   font-size: 34px;
-  font-weight: 700;
 }
 
-/* BUTTONS */
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .bigBtn {
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 16px;
   border: none;
-  font-weight: 600;
   background: rgba(255,255,255,0.12);
   color: white;
-  backdrop-filter: blur(20px);
-}
-
-.bigBtn:active {
-  transform: scale(0.97);
 }
 
 .secondary {
   background: rgba(255,255,255,0.08);
 }
 
-/* STATUS */
-#status {
-  margin: 10px 0;
-  opacity: 0.8;
+.hidden {
+  display: none;
 }
 
-/* LOADER */
 #loader {
   width: 40px;
   height: 40px;
@@ -77,48 +63,40 @@ body::before {
   to { transform: rotate(360deg); }
 }
 
-/* GLASS */
 .glass {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.1);
   backdrop-filter: blur(20px);
-  border-radius: 18px;
   padding: 20px;
-  margin-top: 15px;
+  border-radius: 16px;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-top: 15px;
 }
 
 .card {
   background: rgba(255,255,255,0.08);
-  padding: 12px;
-  border-radius: 14px;
+  padding: 10px;
+  border-radius: 12px;
 }
 
 /* MAP */
 .mapBox {
   margin-top: 15px;
+  border-radius: 16px;
   overflow: hidden;
-  border-radius: 18px;
-  transition: 0.5s ease;
 }
 
 #map {
   height: 220px;
-  transition: 0.5s ease;
 }
 
-/* EXPANDED MAP */
 .mapBox.expanded {
   position: fixed;
   inset: 0;
   z-index: 999;
-  border-radius: 0;
 }
 
 .mapBox.expanded #map {
@@ -138,34 +116,12 @@ body::before {
 
 .miniBtn {
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   border: none;
-  font-weight: 600;
   background: rgba(0,0,0,0.4);
   color: white;
 }
 
 .danger {
   background: rgba(255,80,80,0.4);
-}
-
-.hidden {
-  display: none;
-}
-
-/* INTRO */
-#welcome {
-  position: fixed;
-  inset: 0;
-  background: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeOut 1s ease forwards;
-  animation-delay: 1.5s;
-}
-
-@keyframes fadeOut {
-  to { opacity: 0; visibility: hidden; }
 }
