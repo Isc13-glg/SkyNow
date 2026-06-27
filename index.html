@@ -3,29 +3,41 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Weather + UV Dashboard</title>
+<title>Pro Weather Dashboard</title>
 
 <link rel="stylesheet" href="style.css"/>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 
 <body>
 
+<div class="bg"></div>
+
 <div class="app">
 
-  <div class="header">🌤️ WEATHER & UV DASHBOARD</div>
+  <div class="header">
+    🌤️ Pro Weather Dashboard
+  </div>
 
-  <button id="startBtn">GET MY LOCATION</button>
+  <button id="startBtn">Get My Weather</button>
 
   <div id="status">Waiting for location...</div>
 
-  <div id="result" class="hidden">
+  <div id="card" class="hidden">
 
-    <div id="weatherBox"></div>
-    <div id="uvBox"></div>
-    <div id="msg"></div>
+    <div class="grid">
+
+      <div class="box" id="tempBox">🌡️ --</div>
+      <div class="box" id="uvBox">☀️ --</div>
+      <div class="box" id="windBox">💨 --</div>
+      <div class="box" id="humidBox">💧 --</div>
+
+    </div>
+
+    <div id="message"></div>
 
     <div id="map"></div>
 
