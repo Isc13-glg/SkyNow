@@ -26,7 +26,7 @@ const bg = document.getElementById("bg");
 
 let map;
 
-// 🌍 fallback cities
+/* 🌍 fallback locations */
 const locations = [
   {name:"Cyprus", lat:35.1856, lon:33.3823},
   {name:"London", lat:51.5072, lon:-0.1276},
@@ -35,7 +35,7 @@ const locations = [
   {name:"New York", lat:40.7128, lon:-74.0060}
 ];
 
-// dropdown
+/* fill dropdown */
 locations.forEach(l=>{
   const o = document.createElement("option");
   o.value = JSON.stringify(l);
@@ -43,41 +43,41 @@ locations.forEach(l=>{
   countrySelect.appendChild(o);
 });
 
-// 🌤 weather text
+/* 🌤 weather text */
 function weatherText(code){
-  if(code === 0) return "Clear";
-  if(code <= 3) return "Cloudy";
-  if(code <= 48) return "Fog";
+  if(code === 0) return "Clear Sky";
+  if(code <= 3) return "Partly Cloudy";
+  if(code <= 48) return "Foggy";
   if(code <= 67) return "Rain";
   if(code <= 82) return "Showers";
   return "Storm";
 }
 
-// 🌈 BACKGROUND ENGINE
+/* 🌈 background changer */
 function setBackground(code){
 
-  let color;
+  let bgColor;
 
   if(code === 0){
-    color = "linear-gradient(180deg,#4facfe,#00f2fe)";
+    bgColor = "linear-gradient(180deg,#4facfe,#00f2fe)";
   }
   else if(code <= 3){
-    color = "linear-gradient(180deg,#757f9a,#d7dde8)";
+    bgColor = "linear-gradient(180deg,#8e9eab,#eef2f3)";
   }
   else if(code <= 48){
-    color = "linear-gradient(180deg,#3a3a3a,#1c1c1c)";
+    bgColor = "linear-gradient(180deg,#3a3a3a,#1c1c1c)";
   }
   else if(code <= 67){
-    color = "linear-gradient(180deg,#314755,#26a0da)";
+    bgColor = "linear-gradient(180deg,#314755,#26a0da)";
   }
   else{
-    color = "linear-gradient(180deg,#0f2027,#203a43,#2c5364)";
+    bgColor = "linear-gradient(180deg,#0f2027,#203a43,#2c5364)";
   }
 
-  bg.style.background = color;
+  bg.style.background = bgColor;
 }
 
-// 🗺 map
+/* 🗺 map */
 function loadMap(lat,lon){
 
   if(map) map.remove();
@@ -90,7 +90,7 @@ function loadMap(lat,lon){
   L.marker([lat,lon]).addTo(map);
 }
 
-// 🌍 API
+/* 🌍 API */
 async function getWeather(lat,lon){
 
   const url =
@@ -113,8 +113,11 @@ async function getWeather(lat,lon){
   let best = Infinity;
 
   for(let x=0;x<times.length;x++){
-    const d = Math.abs(new Date(times[x]) - now);
-    if(d < best){ best = d; i = x; }
+    const diff = Math.abs(new Date(times[x]) - now);
+    if(diff < best){
+      best = diff;
+      i = x;
+    }
   }
 
   return {
@@ -130,7 +133,7 @@ async function getWeather(lat,lon){
   };
 }
 
-// 🔥 GPS
+/* 📍 GPS */
 function getLocation(){
   return new Promise(r=>{
     navigator.geolocation.getCurrentPosition(
@@ -141,7 +144,7 @@ function getLocation(){
   });
 }
 
-// 🚀 MAIN LOAD
+/* 🚀 MAIN LOAD FUNCTION */
 async function loadWeather(lat,lon){
 
   loader.classList.remove("hidden");
@@ -160,21 +163,23 @@ async function loadWeather(lat,lon){
   bigTemp.textContent = `${w.temp}°`;
   conditionText.textContent = weatherText(w.code);
 
-  temp.textContent = `${w.temp}°C`;
-  feels.textContent = `${w.feels}°C`;
-  uv.textContent = `UV ${w.uv}`;
-  wind.textContent = `${w.wind} km/h`;
-  hum.textContent = `${w.hum}%`;
-  vis.textContent = `${w.vis} m`;
+  /* 🌟 CLEAN APPLE STYLE LABELS (NO EMOJIS IN VALUES) */
+  temp.textContent = `Temperature: ${w.temp}°C`;
+  feels.textContent = `Feels Like: ${w.feels}°C`;
+  uv.textContent = `UV Index: ${w.uv}`;
+  wind.textContent = `Wind Speed: ${w.wind} km/h`;
+  hum.textContent = `Humidity: ${w.hum}%`;
+  vis.textContent = `Visibility: ${w.vis} m`;
 
   sun.innerHTML =
-    `🌅 ${w.sunrise.split("T")[1]} <br> 🌇 ${w.sunset.split("T")[1]}`;
+    `Sunrise: ${w.sunrise.split("T")[1]}<br>` +
+    `Sunset: ${w.sunset.split("T")[1]}`;
 
   setBackground(w.code);
 }
 
-// 📍 GPS button
-startBtn.onclick = async () => {
+/* 📍 GPS BUTTON */
+startBtn.onclick = async ()=>{
 
   const pos = await getLocation();
 
@@ -191,7 +196,7 @@ startBtn.onclick = async () => {
   loadWeather(lat,lon);
 };
 
-// 🌍 manual
+/* 🌍 MANUAL MODE */
 manualBtn.onclick = ()=>{
   manualBox.classList.toggle("hidden");
 };
