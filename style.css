@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", sans-serif;
   color: white;
   overflow-x: hidden;
 }
@@ -20,43 +20,15 @@ body::before {
   z-index: -1;
 }
 
-/* 🌟 INTRO ANIMATION */
-#welcome {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: black;
-  z-index: 9999;
-  animation: fadeOut 1s ease forwards;
-  animation-delay: 1.5s;
-}
-
-.welcomeCard {
-  animation: pop 0.8s ease;
-}
-
-@keyframes pop {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  to { opacity: 0; visibility: hidden; }
-}
-
 /* APP */
 .app {
-  padding: 22px;
+  padding: 20px;
   text-align: center;
 }
 
-/* TITLE */
 .title {
   font-size: 34px;
   font-weight: 700;
-  animation: fadeIn 0.8s ease;
 }
 
 /* BUTTONS */
@@ -67,90 +39,73 @@ body::before {
 }
 
 .bigBtn {
-  padding: 18px;
-  border-radius: 22px;
+  padding: 16px;
+  border-radius: 18px;
   border: none;
-  font-size: 16px;
   font-weight: 600;
-  color: white;
   background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(18px);
-  transition: 0.25s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  color: white;
+  backdrop-filter: blur(20px);
 }
 
 .bigBtn:active {
-  transform: scale(0.96);
-}
-
-/* SMALL BUTTONS */
-.smallBtn {
-  padding: 12px;
-  margin-top: 10px;
+  transform: scale(0.97);
 }
 
 .secondary {
   background: rgba(255,255,255,0.08);
 }
 
-.danger {
-  background: rgba(255,80,80,0.25);
-}
-
-/* STATUS ANIMATION */
+/* STATUS */
 #status {
-  margin-top: 10px;
+  margin: 10px 0;
   opacity: 0.8;
-  animation: fadeIn 0.5s ease;
 }
 
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(10px);}
-  to {opacity:1; transform:translateY(0);}
+/* LOADER */
+#loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  margin: 15px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* GLASS */
 .glass {
   background: rgba(255,255,255,0.10);
   backdrop-filter: blur(20px);
-  border-radius: 22px;
-  padding: 22px;
+  border-radius: 18px;
+  padding: 20px;
   margin-top: 15px;
-  animation: fadeIn 0.6s ease;
-}
-
-/* HERO */
-#bigTemp {
-  font-size: 72px;
-  font-weight: 700;
-}
-
-#conditionText {
-  opacity: 0.8;
 }
 
 /* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
   margin-top: 15px;
 }
 
 .card {
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
-  border-radius: 16px;
   padding: 12px;
-  animation: fadeIn 0.5s ease;
+  border-radius: 14px;
 }
 
 /* MAP */
 .mapBox {
   margin-top: 15px;
-  border-radius: 18px;
   overflow: hidden;
-  transition: all 0.5s ease;
+  border-radius: 18px;
+  transition: 0.5s ease;
 }
 
 #map {
@@ -172,25 +127,45 @@ body::before {
 
 /* MAP CONTROLS */
 .mapControls {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  justify-content: center;
   gap: 10px;
-  margin-top: 10px;
+  z-index: 1000;
 }
 
-/* LOADER */
-#loader {
-  width: 44px;
-  height: 44px;
-  border: 4px solid rgba(255,255,255,0.2);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 15px auto;
+.miniBtn {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  background: rgba(0,0,0,0.4);
+  color: white;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.danger {
+  background: rgba(255,80,80,0.4);
 }
 
-.hidden { display:none; }
+.hidden {
+  display: none;
+}
+
+/* INTRO */
+#welcome {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 1.5s;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
