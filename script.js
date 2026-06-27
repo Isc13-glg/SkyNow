@@ -1,6 +1,7 @@
 
 const startBtn = document.getElementById("startBtn");
 const status = document.getElementById("status");
+const loader = document.getElementById("loader");
 const card = document.getElementById("card");
 
 const tempBox = document.getElementById("temp");
@@ -32,13 +33,13 @@ function windDir(deg){
   return dirs[Math.round(deg/45)%8];
 }
 
-// ☁️ weather code
+// ☁️ weather condition
 function condition(code){
-  if(code===0) return "Clear sky ☀️";
-  if(code<=3) return "Cloudy ⛅";
-  if(code<=48) return "Fog 🌫️";
-  if(code<=67) return "Rain 🌧️";
-  if(code<=82) return "Showers 🌦️";
+  if(code === 0) return "Clear sky ☀️";
+  if(code <= 3) return "Cloudy ⛅";
+  if(code <= 48) return "Fog 🌫️";
+  if(code <= 67) return "Rain 🌧️";
+  if(code <= 82) return "Showers 🌦️";
   return "Storm ⛈️";
 }
 
@@ -50,7 +51,7 @@ function playAlarm(uv){
   }
 }
 
-// 🗺 map fix
+// 🗺️ map fix
 function loadMap(lat,lon){
 
   setTimeout(()=>{
@@ -70,7 +71,7 @@ function loadMap(lat,lon){
   },300);
 }
 
-// 🌍 WEATHER API (FULL)
+// 🌍 weather API
 async function getWeather(lat,lon){
 
   const url =
@@ -85,11 +86,11 @@ async function getWeather(lat,lon){
   const now = new Date();
   const times = data.hourly.time;
 
-  let i=0, best=999999;
+  let i = 0, best = 999999;
 
   for(let x=0;x<times.length;x++){
     const d = Math.abs(new Date(times[x]) - now);
-    if(d<best){ best=d; i=x; }
+    if(d < best){ best = d; i = x; }
   }
 
   return {
@@ -106,42 +107,69 @@ async function getWeather(lat,lon){
   };
 }
 
-// 🚀 START
+// 🚀 START BUTTON
 startBtn.onclick = () => {
 
   unlocked = true;
+
   status.textContent = "Getting location...";
+  loader.classList.remove("hidden");
 
-  navigator.geolocation.getCurrentPosition(async pos => {
+  navigator.geolocation.getCurrentPosition(
 
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+    async pos => {
 
-    loadMap(lat,lon);
+      try {
 
-    const w = await getWeather(lat,lon);
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
 
-    card.classList.remove("hidden");
-    status.style.display = "none";
+        loadMap(lat,lon);
 
-    tempBox.textContent = `🌡️ Temp: ${w.temp}°C`;
-    feelsBox.textContent = `🤗 Feels: ${w.feels}°C`;
-    uvBox.textContent = `☀️ UV: ${w.uv}`;
-    windBox.textContent = `💨 Wind: ${w.wind} km/h (${windDir(w.windDir)})`;
-    humBox.textContent = `💧 Humidity: ${w.hum}%`;
-    visBox.textContent = `👁️ Visibility: ${w.vis} m`;
+        status.textContent = "Loading weather...";
 
-    sunBox.innerHTML =
-      `🌅 Sunrise: ${w.sunrise.split("T")[1]}<br>🌇 Sunset: ${w.sunset.split("T")[1]}`;
+        const w = await getWeather(lat,lon);
 
-    condBox.textContent = `☁️ ${condition(w.code)}`;
+        loader.classList.add("hidden");
+        status.style.display = "none";
+        card.classList.remove("hidden");
 
-    msg.textContent = condition(w.code);
+        tempBox.textContent = `🌡️ Temp: ${w.temp}°C`;
+        feelsBox.textContent = `🤗 Feels: ${w.feels}°C`;
+        uvBox.textContent = `☀️ UV: ${w.uv}`;
+        windBox.textContent = `💨 Wind: ${w.wind} km/h (${windDir(w.windDir)})`;
+        humBox.textContent = `💧 Humidity: ${w.hum}%`;
+        visBox.textContent = `👁️ Visibility: ${w.vis} m`;
 
-    speak(`Weather is ${condition(w.code)}. Temperature is ${w.temp} degrees.`);
+        sunBox.innerHTML =
+          `🌅 Sunrise: ${w.sunrise.split("T")[1]}<br>🌇 Sunset: ${w.sunset.split("T")[1]}`;
 
-    playAlarm(w.uv);
+        condBox.textContent = `☁️ ${condition(w.code)}`;
 
-  });
+        msg.textContent = condition(w.code);
 
+        speak(`Weather is ${condition(w.code)}. Temperature is ${w.temp} degrees.`);
+
+        playAlarm(w.uv);
+
+      } catch (e) {
+
+        loader.classList.add("hidden");
+        status.textContent = "Weather loading failed.";
+        console.log(e);
+
+      }
+
+    },
+
+    err => {
+      loader.classList.add("hidden");
+      status.textContent = "Location blocked or unavailable.";
+    },
+
+    {
+      enableHighAccuracy: true
+    }
+
+  );
 };
