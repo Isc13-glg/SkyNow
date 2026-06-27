@@ -18,7 +18,6 @@
 
 <body>
 
-<!-- 🌟 WELCOME -->
 <div id="welcome">
   <div class="welcomeCard">
     <h1>☁️ SkyNow</h1>
@@ -26,17 +25,14 @@
   </div>
 </div>
 
-<!-- 🌈 BACKGROUND -->
 <div id="bg"></div>
 
-<!-- APP SCREEN -->
 <div id="mainScreen">
 
   <div class="app">
 
     <h1 class="title">SkyNow</h1>
 
-    <!-- 🌟 BUTTONS -->
     <div class="controls">
       <button id="startBtn" class="bigBtn">📍 Use My Location</button>
       <button id="manualBtn" class="bigBtn secondary">🌍 Manual Select</button>
@@ -51,28 +47,26 @@
 
     <div id="loader" class="hidden"></div>
 
-    <!-- HERO -->
     <div id="mainCard" class="glass hidden">
       <div id="bigTemp">--°</div>
       <div id="conditionText">--</div>
     </div>
 
-    <!-- CARDS -->
     <div id="cards" class="grid hidden">
-
       <div class="card">🌡️ <span id="temp"></span></div>
       <div class="card">🤗 <span id="feels"></span></div>
       <div class="card">☀️ <span id="uv"></span></div>
       <div class="card">💨 <span id="wind"></span></div>
       <div class="card">💧 <span id="hum"></span></div>
       <div class="card">👁️ <span id="vis"></span></div>
-
       <div class="card wide" id="sun"></div>
+    </div>
 
-      <div class="card wide">
-        <div id="map"></div>
-      </div>
+    <!-- 🗺️ MAP -->
+    <button id="mapToggle" class="bigBtn secondary">🗺️ Expand Map</button>
 
+    <div id="mapContainer" class="mapBox">
+      <div id="map"></div>
     </div>
 
   </div>
